@@ -72,10 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function getZero (number) {
-        if (number < 10 ) {
+    function getZero(number) {
+        if (number < 10) {
             return '0' + number;
-        }  else { return number;}
+        } else {
+            return number;
+        }
     }
 
     function updateTimer(selector, timeLimit) {
@@ -86,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             minutes = timerBlock.querySelector('#minutes'),
             seconds = timerBlock.querySelector('#seconds'),
             timeInterval = setInterval(updateclock, 1000);
-    
+
         updateclock();
 
         function updateclock() {
@@ -103,12 +105,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 hours.innerHTML = "00";
                 minutes.innerHTML = "00";
                 seconds.innerHTML = "00";
-
             }
-
         }
     }
 
     updateTimer('.timer', deadline);
 
+    //modal
+
+    function showModal (dataModal, dataClose, connectForm) {
+
+        const modal = document.querySelectorAll(dataModal),
+              close = document.querySelector(dataClose),
+              form = document.querySelector(connectForm);
+        
+        function toggler() {
+            form.classList.toggle('show');
+            document.body.style.overflow = "";
+        }
+        
+        modal.forEach(element => {
+            element.addEventListener('click', () => {
+
+                    form.classList.toggle('show');
+                    document.body.style.overflow = "hidden";
+            });
+        });
+
+        close.addEventListener('click', toggler);
+
+        form.addEventListener('click', (event) => {
+            if(event.target === form) {
+                toggler();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === "Escape" && form.classList.contains('show') ) {
+                toggler();
+            }
+        });
+
+    }
+
+    showModal("[data-modal]", "[data-close]", ".modal");
+  
 });
