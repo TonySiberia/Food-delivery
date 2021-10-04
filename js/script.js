@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     //Tabs
+    "use strict";
 
     const tabHeader = document.querySelector('.tabheader__items'),
         tabHeaderItems = tabHeader.querySelectorAll('.tabheader__item'),
@@ -113,41 +113,109 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //modal
 
-    function showModal (dataModal, dataClose, connectForm) {
+    // function showModal(dataModal, dataClose, connectForm) {
 
-        const modal = document.querySelectorAll(dataModal),
-              close = document.querySelector(dataClose),
-              form = document.querySelector(connectForm);
-        
-        function toggler() {
-            form.classList.toggle('show');
-            document.body.style.overflow = "";
+    //     const modal = document.querySelectorAll(dataModal),
+    //         close = document.querySelector(dataClose),
+    //         form = document.querySelector(connectForm);
+
+    //     function togglerOpen() {
+    //         form.classList.toggle('show');
+    //         document.body.style.overflow = "hidden";
+    //         clearInterval(showModalDelay);
+    //     }
+
+    //     function togglerClose() {
+    //         form.classList.toggle('show');
+    //         document.body.style.overflow = "";
+    //     }
+
+    //     modal.forEach(element => {
+    //         element.addEventListener('click', togglerOpen);
+    //     });
+
+    //     close.addEventListener('click', togglerClose);
+
+    //     form.addEventListener('click', (event) => {
+    //         if (event.target === form) {
+    //             togglerClose();
+    //         }
+    //     });
+
+    //     document.addEventListener('keydown', (event) => {
+    //         if (event.code === "Escape" && form.classList.contains('show')) {
+    //             togglerClose();
+    //         }
+    //     });
+
+    //     const showModalDelay = setTimeout(togglerOpen, 10000);
+
+    //     window.addEventListener('scroll', () => {
+    //         if (window.innerHeight + window.pageYOffset >= document.documentElement.scrollHeight) {
+    //             setTimeout(togglerOpen, 2000);
+    //         }
+    //     });
+
+    // }
+
+    // showModal("[data-modal]", "[data-close]", ".modal");
+
+    //menu
+
+    class MenuItemTemplate {
+        constructor(imgSrc, subtitle, decription, totalCost, ...somthigElse) {
+            this.imgSrc = imgSrc;
+            this.subtitle = subtitle;
+            this.decription = decription;
+            this.totalCost = totalCost;
+            this.heigth = "133px";
+            this.dollar = 75;
+            this.DollarToRubl();
+            this.somthigElse = somthigElse;
         }
-        
-        modal.forEach(element => {
-            element.addEventListener('click', () => {
 
-                    form.classList.toggle('show');
-                    document.body.style.overflow = "hidden";
-            });
-        });
+        DollarToRubl () {   
+            this.totalCost = Math.floor(this.totalCost / this.dollar * 2);
+        }
 
-        close.addEventListener('click', toggler);
+        creatItem () {
+            let newDiv = document.createElement('div'),
+                menu = document.querySelector(".menu__field .container");
+                
+            newDiv.classList.add('menu__item');
 
-        form.addEventListener('click', (event) => {
-            if(event.target === form) {
-                toggler();
-            }
-        });
+            if (this.somthigElse.length > 0) {
+                this.somthigElse.forEach(element => {
+                    newDiv.classList.add(element);
+                });
+            } 
+          
+            console.log(newDiv);
+            newDiv.innerHTML =  `<img src=${this.imgSrc} alt="post">
+                                <h3 class="menu__item-subtitle">${this.subtitle}</h3>
+                                <div class="menu__item-descr">${this.decription}</div>
+                                <div class="menu__item-divider"></div>
+                                <div class="menu__item-price">
+                                <div class="menu__item-cost">Цена:</div>
+                                <div class="menu__item-total"><span>${this.totalCost}</span>  долларов/день</div>`;
 
-        document.addEventListener('keydown', (event) => {
-            if (event.code === "Escape" && form.classList.contains('show') ) {
-                toggler();
-            }
-        });
-
+            newDiv.querySelector(".menu__item-descr").style.minHeight = this.heigth;
+            menu.append(newDiv);
+        }   
     }
 
-    showModal("[data-modal]", "[data-close]", ".modal");
-  
+
+
+    const firstItemDescription = 'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с       оптимальной ценой и высоким качеством!',
+        secondItemDescription = 'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+        thirdItemDescription = 'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+        firstItem = new MenuItemTemplate("img/tabs/vegy.jpg", 'Меню "Фитнес"', firstItemDescription, 229, "get", "out", "here", "men"),
+        secondItem = new MenuItemTemplate("img/tabs/elite.jpg", 'Меню "Премиум"', secondItemDescription, 550),
+        thirdItem = new MenuItemTemplate("img/tabs/post.jpg", 'Меню "Постное"', thirdItemDescription, 430);
+
+
+    document.querySelector(".menu__field .container").innerHTML = "";        
+    firstItem.creatItem();
+    secondItem.creatItem();
+    thirdItem.creatItem();
 });
