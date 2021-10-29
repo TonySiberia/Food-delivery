@@ -211,23 +211,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector(".menu__field .container").innerHTML = "";    
 
-    const getResource = async url => {
-            const resolve = await fetch(url);
-        
-            if(!resolve.ok) {
-                throw new Error(`could not fetch ${url}, status: ${resolve.status}`);
-            }
+        // const getResource = async url => {
+        //         const resolve = await fetch(url);
+            
+        //         if(!resolve.ok) {
+        //             throw new Error(`could not fetch ${url}, status: ${resolve.status}`);
+        //         }
 
-            return await resolve.json();
-        };
+        //         return await resolve.json();
+        //     };
 
-    getResource('http://localhost:3000/menu')
-        .then(data => {
-            data.forEach(({img, altimg, title, descr, price}) => {
-                // console.log(`price = ${price} это `, typeof(price));
-                new MenuItemTemplate(img, altimg, title, descr, price).creatItem();
-            });
-        });
+        // getResource('http://localhost:3000/menu')
+        //     .then(data => {
+        //         data.forEach(({img, altimg, title, descr, price}) => {
+        //             // console.log(`price = ${price} это `, typeof(price));
+        //             new MenuItemTemplate(img, altimg, title, descr, price).creatItem();
+        //         });
+        //     });
 
 
     //send-forms
@@ -310,4 +310,141 @@ const postDate = async (url, data) => {
         },5000);
     }
 
+    //slider
+
+    const sliders = document.querySelectorAll('.offer__slide'),
+          totalCounter = document.querySelector('.offer__slider-counter [id="total"]'),
+          prevButton = document.querySelector('.offer__slider-prev'),
+          nextButton = document.querySelector('.offer__slider-next');
+    
+    let currentCounter = document.querySelector('.offer__slider-counter [id="current"]'),
+        counterValue = 1;
+    
+    totalCounter.textContent = `0${sliders.length}`;
+    currentCounter.textContent = `0${counterValue}`;
+
+    sliders.forEach(element => {
+        hideSlider(element);
+    });
+
+    showSlider(sliders[0]);
+
+    function hideSlider (slider) {
+        slider.classList.remove('show');
+        slider.classList.add('hide'); 
+    }
+
+    function showSlider (slider) {
+        slider.classList.remove('hide');
+        slider.classList.add('show'); 
+    }
+    
+    prevButton.addEventListener('click', () => {
+
+        hideSlider(sliders[counterValue - 1]);
+
+        if(counterValue == 1) {
+            counterValue = sliders.length;
+            currentCounter.textContent = `0${counterValue}`;
+        } else {
+            counterValue--;
+            currentCounter.textContent = `0${counterValue}`;
+        }
+
+        showSlider(sliders[counterValue - 1]);
+
+    }); 
+
+    nextButton.addEventListener('click', () => {
+
+        hideSlider(sliders[counterValue - 1]);
+
+        if(counterValue == sliders.length) {
+            counterValue = 1;
+            currentCounter.textContent = `0${counterValue}`;
+        } else {
+            counterValue++;
+            currentCounter.textContent = `0${counterValue}`;
+        }
+
+        showSlider(sliders[counterValue - 1]);
+
+    }); 
+
+    //calc
+
+    const result = document.querySelector('.calculating__result span');
+
+    let sex, height, weight, age, ratio;
+
+
+    function calcTotal() {
+
+        if (!height || !weight || !age) {
+            result.textContent = '0';
+            return;
+        } else {
+            if (sex === 'female') {
+                result.textContent = Math.round(447.6 + (9.2 * weight) + (3.1 * height) - (4.3 * age) * ratio);
+            }
+            if (sex === 'male') {
+                result.textContent = Math.round(88.36 + (13.4 * weight) + (4.8 * height) - (5.7 * age) * ratio);
+            }
+        }
+    }
+
+    calcTotal();
+
+    function getStaticinformation (parrentSelector, activeClass) {
+        const elements = document.querySelectorAll(parrentSelector);
+
+        elements.forEach( element => {
+            element.addEventListener('click', e => {
+                
+                if (e.target.getAttribute('data-ratio')) {
+                    ratio = e.target.getAttribute('data-ratio');
+                } else {
+                    sex = e.target.getAttribute('id');
+                }
+
+                elements.forEach( e => {
+                    e.classList.remove(activeClass);
+                });
+
+                element.classList.add(activeClass);
+                calcTotal();
+
+            });
+        });     
+
+    }
+
+    getStaticinformation('#gender div', 'calculating__choose-item_active'); 
+    getStaticinformation('.calculating__choose_big div', 'calculating__choose-item_active'); 
+
+    function getDynamicInformation (selector) {
+        const input = document.querySelector(selector);
+        
+
+        input.addEventListener('input', () => {
+            switch(input.getAttribute('id')) {
+                case "height":
+                    height = +input.value;
+                    break;
+                case "weight":
+                    weight = +input.value;
+                    break;
+                case "age":
+                    age = +input.value;
+                    break;
+            }
+            calcTotal();
+        });
+    }
+
+    getDynamicInformation('#height');
+    getDynamicInformation('#weight ');
+    getDynamicInformation('#age');
+
 });
+
